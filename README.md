@@ -10,5 +10,5 @@ The complete list of R versions, with release dates is
 
 Data is sent in JSON. See the links for the data format.
 
-Alternative, this service is available as an
-[R package](https://github.com/metacran/rversions).
+Alternatively, this service is available as an
+[R package](https://github.com/r-hub/rversions).
