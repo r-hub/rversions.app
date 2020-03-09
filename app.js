@@ -1,10 +1,12 @@
-var express = require('express');
-var logger = require('morgan');
-var mustache = require('mustache-express');
+const express = require('express');
+const logger = require('morgan');
+const mustache = require('mustache-express');
 
-var rts_index = require('./routes/index');
+const rts_index = require('./routes/index');
 
-var app = express();
+const app = express();
+
+const cache = require('./lib/cache');
 
 app.use(logger('combined'));
 app.use(express.urlencoded({ extended: false }));

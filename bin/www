@@ -1,37 +1,18 @@
 #!/usr/bin/env node
 
-/**
- * Module dependencies.
- */
+// Module dependencies.
 
-var app = require('../app');
-var debug = require('debug')('rversions.app:server');
-var http = require('http');
+const app = require('../app');
+const debug = require('debug')('rversions.app:server');
+const http = require('http');
+const cache = require('../lib/cache');
 
-/**
- * Get port from environment and store in Express.
- */
+// Get port from environment and store in Express.
 
 var port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
 
-/**
- * Create HTTP server.
- */
-
-var server = http.createServer(app);
-
-/**
- * Listen on provided port, on all network interfaces.
- */
-
-server.listen(port);
-server.on('error', onError);
-server.on('listening', onListening);
-
-/**
- * Normalize a port into a number, string, or false.
- */
+// Normalize a port into a number, string, or false.
 
 function normalizePort(val) {
   var port = parseInt(val, 10);
@@ -49,9 +30,7 @@ function normalizePort(val) {
   return false;
 }
 
-/**
- * Event listener for HTTP server "error" event.
- */
+// Event listener for HTTP server "error" event.
 
 function onError(error) {
   if (error.syscall !== 'listen') {
@@ -77,6 +56,8 @@ function onError(error) {
   }
 }
 
+let server;
+
 /**
  * Event listener for HTTP server "listening" event.
  */
@@ -88,3 +69,34 @@ function onListening() {
     : 'port ' + addr.port;
   debug('Listening on ' + bind);
 }
+
+async function cache_update() {
+    try {
+        await cache.update();
+        console.log('[' + new Date().toUTCString() +
+                    '] Cache updated successfully');
+    } catch(e) {
+        console.log('[' + new Date().toUTCString() +
+                    '] Cache update failed :(');
+        console.log(e);
+    }
+}
+
+(async () => {
+    // Populate the DB, if empty
+    await cache.maybe_update();
+
+    // Update once in a minute ...
+    setTimeout(cache_update, 60 * 1000);
+
+    // ... and then update every hour
+    setInterval(cache_update, 60 * 60 * 1000);
+
+    // Create HTTP server.
+    server = http.createServer(app);
+
+    // Listen on provided port, on all network interfaces.
+    server.listen(port);
+    server.on('error', onError);
+    server.on('listening', onListening);
+})();
