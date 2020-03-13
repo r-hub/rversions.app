@@ -1,0 +1,225 @@
+openapi: 3.0.0
+info:
+  title: The R-hub R versions API
+  version: 1.0.0
+  contact:
+    email: admin@r-hub.io
+  license:
+    name: The MIT License
+    url: 'https://opensource.org/licenses/MIT'
+  x-logo:
+    url: 'https://github.com/r-hub/branding/raw/master/logo/rhub-header.png'
+  description: |
+    This service is an API to query current and past R versions
+    and installers. You can use it is devops scripts, e.g. for continuous
+    integration tools, to query which version(s) or R you want to install.
+    It is updated every hour, so a new R release or a new installer is
+    typically picked up within on hour.
+
+    ### Format
+
+    This is a JSON API, all responses are JSON.
+
+    ### The R release process
+
+    In the current R release process, there is a new major or minor release
+    every year, typically in April. There are also several patch releases.
+    Once there is a newer major or minor release, the older major or minor
+    releases typically do not get new patch releases. (E.g. once R 3.6.0 is out,
+    the R 3.5.x minor branch will not receive more releases.)
+
+    ### Typical use cases
+
+    * To report the currently released version of R, use `/r-release`.
+    * To download and compile the currently released version of R, use
+      `/r-release-tarball`.
+    * To download the latest Windows or macOS installer, use `/r-release-win`
+      or `/r-release-macos`, respectively.
+    * To report or download the source or an installer for the latest release
+      or the penultimate R minor branch (R-oldrel as CRAN calls it), use
+      `/r-oldrel`.
+
+    ### Feedback
+
+    The source code of this service lives at
+    <https://github.com/r-hub/rversions.app#readme>.
+
+    You can download the [OpenApi 3.0.x](https://www.openapis.org/)
+    [specification of this API.](/openapi.yaml)
+
+    To report bugs please use the issue tracker at
+    <https://github.com/r-hub/rversions.app/issues>.
+
+    ### Copyright
+
+    This service is part of the [R-hub project](https://r-hub.io),
+    supported by the [R Consortium](https://www.r-consortium.org).
+
+servers:
+  - url: https://rversions.r-pkg.org
+
+paths:
+  /r-release:
+    get:
+      summary: R-release
+      description: |
+        The current released version of R.
+        Determined from the R SVN repository. It you need a version
+        for which an installer or tarball is available for download, look at the
+        other endpoints.
+      responses:
+        '200':
+          description: Successful query.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/version'
+              example:
+                version: '3.6.3'
+                date: "2020-02-29T08:05:16.744223Z"
+                nickname: "Holding the Windsock"
+
+
+  /r-oldrel:
+    get:
+      summary: R oldrel
+      description: |
+        The last release of the previous minor branch.
+        E.g. if the latest released version is '3.6.3', then 'oldrel'
+        is the latest patch version of the '3.5' branch, currently '3.5.3'.
+      responses:
+        '200':
+          description: Successful query.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/version'
+
+  /r-release-tarball:
+    get:
+      summary: Latest source tarball.
+      description: |
+        The latest version with a downloadable source code tarball.
+        This is usually the same as 'r-release', but it might take
+        some time to create a source tarball from the SVN tag. Typically you
+        query the release version because you want to download a source tarball or
+        an installer. Use this end point if you want to download a source tarball.
+      responses:
+        '200':
+          description: Successful query.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/tarball'
+
+  /r-release-win:
+    get:
+      summary: Latest Windows installer.
+      description: |
+        The latest version for which a Windows installer is available.
+        This is usually the same as 'r-release', but there is typically
+        a short delay until the Windows installer is built from the release.
+        Use this end point if you want to download the current Windows installer.
+      responses:
+        '200':
+          description: Successful query.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/installer-win'
+
+  /r-release-macos:
+    get:
+      summary: Latest macOS installer.
+      description: |
+        The latest version for which a macOS installer is aavilable.
+        This is usually the same as 'r-release', but there is typically
+        a short delay until the macOS installer is built from the release.
+        Use this end point if you want to download the current macOS installer.
+      responses:
+        '200':
+          description: Successful query.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/installer-macos'
+
+  /r-versions:
+    get:
+      summary: All R versions.
+      description: |
+        All released R versions, ordered by version number.
+      responses:
+        '200':
+          description: Successful query.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/version'
+
+
+components:
+  schemas:
+    version:
+      properties:
+        version:
+          type: string
+          pattern: '^\d+\.\d+(\.\d+)?$'
+        date:
+          type: string
+          format: date-time
+        nickname:
+          type: string
+      # Both properties are required
+      required:
+        - version
+        - date
+        - nickname
+      example:
+        version: '3.6.3'
+        date: "2020-02-29T08:05:16.744223Z"
+        nickname: "Holding the Windsock"
+
+    tarball:
+      allOf:
+        - $ref: '#/components/schemas/version'
+        - type: object
+          properties:
+            URL:
+              type: string
+              format: uri
+              pattern: '\.tar\.gz$'
+          required:
+          - URL
+          example:
+            URL: "https://cran.r-project.org/src/base/R-3/R-3.6.3.tar.gz"
+
+    installer-win:
+      allOf:
+        - $ref: '#/components/schemas/version'
+        - type: object
+          properties:
+            URL:
+              type: string
+              format: uri
+              pattern: '\.exe$'
+          required:
+          - URL
+          example:
+            URL: "https://cran.r-project.org/bin/windows/base/R-3.6.3-win.exe"
+
+    installer-macos:
+      allOf:
+        - $ref: '#/components/schemas/version'
+        - type: object
+          properties:
+            URL:
+              type: string
+              format: uri
+              pattern: '\.pkg$'
+          required:
+          - URL
+          example:
+            URL: "https://cran.r-project.org/bin/macosx/R-3.6.3.pkg"

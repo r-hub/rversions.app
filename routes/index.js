@@ -3,10 +3,6 @@ const router = express.Router();
 const endpoints = require('../lib/endpoints');
 const cache = require('../lib/cache');
 
-router.get('/', function(req, res) {
-    res.send({ info: "https://github.com/r-hub/rversions.app" });
-});
-
 router.get('/:what', async (req, res, next) => {
   try {
       const what = req.params.what;

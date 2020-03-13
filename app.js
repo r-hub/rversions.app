@@ -10,6 +10,7 @@ const cache = require('./lib/cache');
 
 app.use(logger('combined'));
 app.use(express.urlencoded({ extended: false }));
+app.use(express.static('public'))
 
 app.engine('mustache', mustache()); 
 app.set('view engine', 'mustache');
