@@ -172,7 +172,6 @@ components:
           format: date-time
         nickname:
           type: string
-      # Both properties are required
       required:
         - version
         - date

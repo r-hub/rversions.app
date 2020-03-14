@@ -1,14 +1,21 @@
 const express = require('express');
 const logger = require('morgan');
 const mustache = require('mustache-express');
+const fs = require('fs');
 
 const rts_index = require('./routes/index');
 
 const app = express();
 
-const cache = require('./lib/cache');
+// Logging, can go to file, if requested
+if (!!process.env.NODE_RVERSIONS_APP_LOGFILE) {
+    app.use(logger('combined', {
+        stream: fs.createWriteStream(process.env.NODE_RVERSIONS_APP_LOGFILE)
+    }));
+} else {
+    app.use(logger('combined'));
+}
 
-app.use(logger('combined'));
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static('public'))
 

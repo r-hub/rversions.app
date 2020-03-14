@@ -7,7 +7,8 @@ router.get('/:what', async (req, res, next) => {
   try {
       const what = req.params.what;
       if (endpoints.indexOf(what) == -1) {
-          res.status(404);
+          res.status(404)
+              .send({ error: 'End point not found, see documentation' });
       } else {
           const value = await cache.get(what);
           if (value === null) {
@@ -19,7 +20,6 @@ router.get('/:what', async (req, res, next) => {
           }
       }
 
-      next();
   } catch (error) {
       next(error);
   }
