@@ -1,0 +1,22 @@
+version: '3.3'
+
+volumes:
+  rversions-data:
+
+services:
+
+  rversions:
+    build: .
+    image: "rhub/api-rversions:latest"
+    environment:
+      - REDIS_HOST=redis
+      - PORT=3000
+    depends_on:
+      - redis
+    ports:
+      - "80:3000"
+
+  redis:
+     image: "redis:4.0.11-alpine"
+     volumes:
+     - rversions-data:/data
