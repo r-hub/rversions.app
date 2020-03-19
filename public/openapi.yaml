@@ -56,7 +56,7 @@ info:
     supported by the [R Consortium](https://www.r-consortium.org).
 
 servers:
-  - url: https://rversions.r-pkg.org
+  - url: https://api.r-pkg.org/rversions/
 
 paths:
   /r-release:
