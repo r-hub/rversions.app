@@ -1,6 +1,6 @@
 {
   "name": "rversions.app",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
@@ -15,7 +15,7 @@
     "morgan": "~1.9.1",
     "mustache-express": "^1.3.0",
     "redis": "^3.0.2",
-    "rversions": ">= 1.0.1"
+    "rversions": ">= 1.0.2"
   },
   "devDependencies": {
     "ava": "^3.5.0",
