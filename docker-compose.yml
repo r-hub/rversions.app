@@ -7,7 +7,7 @@ services:
 
   rversions:
     build: .
-    image: "rhub/api-rversions:0.0.1"
+    image: "rhub/api-rversions:0.0.2"
     environment:
       - REDIS_HOST=redis
       - PORT=3000

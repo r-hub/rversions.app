@@ -1,6 +1,6 @@
 {
   "name": "rversions.app",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
@@ -8,6 +8,7 @@
     "doc": "npx redoc-cli bundle -t tools/doc-template.hbs public/openapi.yaml; mv redoc-static.html public/index.html"
   },
   "dependencies": {
+    "applicationinsights": "^1.7.6",
     "cookie-parser": "~1.4.4",
     "debug": "~2.6.9",
     "express": "~4.16.1",
