@@ -1,9 +1,23 @@
 #!/usr/bin/env node
-var debug = require('debug')('rversions.app');
-var app = require('../app');
 
-app.set('port', process.env.PORT || 3000);
+const fs = require('fs');
 
-var server = app.listen(app.get('port'), function() {
-  debug('Express server listening on port ' + server.address().port);
-});
+if (fs.existsSync('/run/secrets/app-insights-key')) {
+    try {
+        process.env.APPINSIGHTS_INSTRUMENTATIONKEY =
+            fs.readFileSync('/run/secrets/app-insights-key', 'utf8');
+    } catch(err) {
+        console.log(err);
+    }
+}
+
+if (!!process.env.APPINSIGHTS_INSTRUMENTATIONKEY) {
+    let appInsights = require('applicationinsights');
+    appInsights.setup().start();
+}
+
+const run = require('./run');
+
+(async () => {
+    await run();
+})();
