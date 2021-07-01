@@ -95,6 +95,28 @@ paths:
               schema:
                 $ref: '#/components/schemas/version'
 
+  '/r-oldrel/:n':
+    parameters:
+    - name: n
+      in: path
+      required: true
+      description: Number of minor versions to go back.
+      schema:
+        type: integer
+    get:
+      summary: Legacy R versions
+      description: |
+        Last releases of previous minor branches. E.g. `r-oldrel/2` is the
+        release that was `oldrel` before the current R release. `r-oldrel/1`
+        is the same as `r-oldrel`.
+      responses:
+        '200':
+          description: Successful query.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/version'
+
   /r-release-tarball:
     get:
       summary: Latest source tarball.
