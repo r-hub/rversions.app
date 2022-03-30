@@ -51,7 +51,7 @@ test('index page', async t => {
     const ret = await got('http://localhost:' + port);
     t.regex(
         ret.body,
-        /ReDoc - OpenAPI\/Swagger-generated API Reference Documentation/
+        /Download OpenAPI specification/
     );
 });
 
@@ -93,6 +93,54 @@ test('r-release-macos', async t => {
     const obj = JSON.parse(ret.body);
     t.truthy(semver.valid(obj.version));
     t.regex(obj.date, iso_8601_regex);
+    t.regex(obj.URL, /https?:\/\/.*\.pkg/);
+});
+
+test('r-next', async t => {
+    const ret = await got('http://localhost:' + port + '/r-next');
+    const obj = JSON.parse(ret.body);
+    t.truthy(semver.valid(obj.version));
+    t.true(obj.date === null);
+    t.regex(obj.URL, /https?:\/\/.*\.tar\.gz$/);
+});
+
+test('r-next-win', async t => {
+    const ret = await got('http://localhost:' + port + '/r-next-win');
+    const obj = JSON.parse(ret.body);
+    t.truthy(semver.valid(obj.version));
+    t.true(obj.date === null);
+    t.regex(obj.URL, /https?:\/\/.*\.exe$/);
+});
+
+test('r-next-macos', async t => {
+    const ret = await got('http://localhost:' + port + '/r-next-macos');
+    const obj = JSON.parse(ret.body);
+    t.truthy(semver.valid(obj.version));
+    t.true(obj.date === null);
+    t.regex(obj.URL, /https?:\/\/.*\.pkg/);
+});
+
+test('r-prerelease', async t => {
+    const ret = await got('http://localhost:' + port + '/r-prerelease');
+    const obj = JSON.parse(ret.body);
+    t.truthy(semver.valid(obj.version));
+    t.true(obj.date === null);
+    t.regex(obj.URL, /https?:\/\/.*\.tar\.gz$/);
+});
+
+test('r-prerelease-win', async t => {
+    const ret = await got('http://localhost:' + port + '/r-prerelease-win');
+    const obj = JSON.parse(ret.body);
+    t.truthy(semver.valid(obj.version));
+    t.true(obj.date === null);
+    t.regex(obj.URL, /https?:\/\/.*\.exe$/);
+});
+
+test('r-prerelease-macos', async t => {
+    const ret = await got('http://localhost:' + port + '/r-prerelease-macos');
+    const obj = JSON.parse(ret.body);
+    t.truthy(semver.valid(obj.version));
+    t.true(obj.date === null);
     t.regex(obj.URL, /https?:\/\/.*\.pkg/);
 });
 

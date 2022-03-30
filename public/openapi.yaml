@@ -166,6 +166,53 @@ paths:
               schema:
                 $ref: '#/components/schemas/installer-macos'
 
+  /r-next:
+    get:
+      summary: The next R release.
+      description: |
+        The next release is R-patched if there is no release process
+        currently. Otherwise it may be R-alpha, R-beta, R-rc or R-prerelease.
+        `r-prerelease` is an alias for this endpoint.
+      responses:
+        '200':
+          description: Successful query.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/next'
+
+  /r-next-win:
+    get:
+      summary: Windows installer for the next release.
+      description: |
+        Windows installer for the next version of R. This can be an installer
+        for `r-next`, or the installer for R-patched, if an installer is not
+        available (yet) for R-alpha, R-beta, etc.
+        `r-prerelease-win` is an alias for this endpoint.
+      responses:
+        '200':
+          description: Successful query.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/next-win'
+
+  /r-next-macos:
+    get:
+      summary: macOS installer for the next R release.
+      description: |
+        macOS installer for the next version of R. This can be an installer
+        for `r-next`, or the installer for R-patched, if an installer is not
+        available (yet) for R-alpha, R-beta, etc.
+        `r-prerelease-macos` is an alias for this endpoint.
+      responses:
+        '200':
+          description: Successful query.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/next-macos'
+
   /r-versions:
     get:
       summary: All R versions.
@@ -244,3 +291,56 @@ components:
           - URL
           example:
             URL: "https://cran.r-project.org/bin/macosx/R-3.6.3.pkg"
+
+    next:
+      allOf:
+        - $ref: '#/components/schemas/version'
+        - type: object
+          properties:
+            type:
+              type: string
+            URL:
+              type: string
+              format: uri
+          required:
+          - type
+          - URL
+          example:
+            type: "alpha"
+            URL: "https://cran.r-project.org/src/base-prerelease/R-latest.tar.gz"
+
+    next-win:
+      allOf:
+        - $ref: '#/components/schemas/version'
+        - type: object
+          properties:
+            type:
+              type: string
+            URL:
+              type: string
+              format: uri
+              pattern: '\.exe$'
+          required:
+          - type
+          - URL
+          example:
+            type: "alpha"
+            URL: "https://cran.r-project.org/bin/windows/base/R-4.2.0alpha-win.exe"
+
+    next-macos:
+      allOf:
+        - $ref: '#/components/schemas/version'
+        - type: object
+          properties:
+            type:
+              type: string
+            URL:
+              type: string
+              format: uri
+              pattern: '\.pkg$'
+          required:
+          - type
+          - URL
+          example:
+            type: "patcheda"
+            URL: "https://mac.r-project.org/high-sierra/last-success/R-4.1-branch-x86_64.pkg"
