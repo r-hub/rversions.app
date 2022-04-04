@@ -96,6 +96,22 @@ test('r-release-macos', async t => {
     t.regex(obj.URL, /https?:\/\/.*\.pkg/);
 });
 
+test('r-release-macos-x86_64', async t => {
+    const ret = await got('http://localhost:' + port + '/r-release-macos-x86_64');
+    const obj = JSON.parse(ret.body);
+    t.truthy(semver.valid(obj.version));
+    t.regex(obj.date, iso_8601_regex);
+    t.regex(obj.URL, /https?:\/\/.*\.pkg/);
+});
+
+test('r-release-macos-arm64', async t => {
+    const ret = await got('http://localhost:' + port + '/r-release-macos-arm64');
+    const obj = JSON.parse(ret.body);
+    t.truthy(semver.valid(obj.version));
+    t.regex(obj.date, iso_8601_regex);
+    t.regex(obj.URL, /https?:\/\/.*arm64.*\.pkg/);
+});
+
 test('r-next', async t => {
     const ret = await got('http://localhost:' + port + '/r-next');
     const obj = JSON.parse(ret.body);
@@ -118,6 +134,22 @@ test('r-next-macos', async t => {
     t.truthy(semver.valid(obj.version));
     t.true(obj.date === null);
     t.regex(obj.URL, /https?:\/\/.*\.pkg/);
+});
+
+test('r-next-macos-x86_64', async t => {
+    const ret = await got('http://localhost:' + port + '/r-next-macos-x86_64');
+    const obj = JSON.parse(ret.body);
+    t.truthy(semver.valid(obj.version));
+    t.true(obj.date === null);
+    t.regex(obj.URL, /https?:\/\/.*\.pkg/);
+});
+
+test('r-next-macos-arm64', async t => {
+    const ret = await got('http://localhost:' + port + '/r-next-macos-arm64');
+    const obj = JSON.parse(ret.body);
+    t.truthy(semver.valid(obj.version));
+    t.true(obj.date === null);
+    t.regex(obj.URL, /https?:\/\/.*arm64.*\.pkg/);
 });
 
 test('r-prerelease', async t => {

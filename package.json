@@ -16,7 +16,7 @@
     "morgan": "~1.9.1",
     "mustache-express": "^1.3.2",
     "redis": "^3.0.2",
-    "rversions": "^1.5.0"
+    "rversions": "^1.5.2"
   },
   "devDependencies": {
     "ava": "^3.5.0",

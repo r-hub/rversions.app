@@ -158,6 +158,23 @@ paths:
         This is usually the same as 'r-release', but there is typically
         a short delay until the macOS installer is built from the release.
         Use this end point if you want to download the current macOS installer.
+        `r-release-macos-x86_64` is an alias of this endpoint.
+      responses:
+        '200':
+          description: Successful query.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/installer-macos'
+
+  /r-release-macos-arm64:
+    get:
+      summary: Latest arm64 macOS installer.
+      description: |
+        The latest version for which an arm64 macOS installer is aavilable.
+        This is usually the same as 'r-release', but there is typically
+        a short delay until the macOS installer is built from the release.
+        Use this end point if you want to download the current macOS installer.
       responses:
         '200':
           description: Successful query.
@@ -205,6 +222,22 @@ paths:
         for `r-next`, or the installer for R-patched, if an installer is not
         available (yet) for R-alpha, R-beta, etc.
         `r-prerelease-macos` is an alias for this endpoint.
+      responses:
+        '200':
+          description: Successful query.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/next-macos'
+
+  /r-next-macos-arm64:
+    get:
+      summary: arm64 macOS installer for the next R release.
+      description: |
+        arm64 macOS installer for the next version of R. This can be an installer
+        for `r-next`, or the installer for R-patched, if an installer is not
+        available (yet) for R-alpha, R-beta, etc.
+        `r-prerelease-macos-arm64` is an alias for this endpoint.
       responses:
         '200':
           description: Successful query.
