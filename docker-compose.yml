@@ -6,6 +6,7 @@ volumes:
 services:
 
   rversions:
+    platform: linux/amd64
     build: .
     image: "rhub/api-rversions:0.0.9"
     environment:
