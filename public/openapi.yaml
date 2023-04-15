@@ -59,6 +59,81 @@ servers:
   - url: https://api.r-hub.io/rversions/
 
 paths:
+  '/resolve/:version/:os/:arch':
+    parameters:
+    - name: version
+      in: path
+      required: true
+      description: |
+        Must be one of:
+        - `devel`: Development version of R.
+        - `next`: The next version of R, see the `r-next` endpoint.
+        - `release`: R release, see the `r-release` endpoint.
+        - `oldrel`: The previous version of R, not counting patch versions.
+        - `oldrel/n`: The n-th previous version of R, not counting patch versions.
+        - `x.y.z`: A specific R version, e.g. `4.0.4`.
+        - `x.y`: The last patch release from a minor R branch, e.g. `4.1`.
+      schema:
+        type: string
+    - name: os
+      in: path
+      required: false
+      description: |
+        Operating system. One of:
+        - `win`
+        - `macos`
+        - `linux-<distro>-<release>`
+
+        Currently supported Linux distros are:
+        - `ubuntu` (18.04, 20.04, 22.04),
+        - `centos` (7, 9),
+        - `debian` (10, 11),
+        - `rhel` (9),
+        - `opensuse` (15.3, 15.4),
+        - `almalinux` (8.x, 9.x),
+        - `rocky` (8.x, 9.x).
+      schema:
+        type: string
+    - name: arch
+      in: path
+      required: false
+      description: |
+        Architecture. Only specify it if 'os' is also specified. It can be
+        - `x86_64` (the default), and
+        - `arm64`
+        for Linux and macOS. For Windows if must be missing currently.
+      schema:
+        type: string
+    get:
+      summary: Resolve an arbitrary R version specification
+      description: |
+        Resolve an R version specification.
+      responses:
+        '200':
+          description: Successful query.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/fullversion'
+              examples:
+                r-release:
+                  value:
+                    version: "4.2.3"
+                    nickname: "Shortstop Beagle"
+                    type: "release"
+                    url: "https://cran.r-project.org/src/base/R-4/R-4.2.3.tar.gz"
+                    date: "2023-03-15T08:06:01.008593Z"
+                r-devel-windows:
+                  value:
+                    version: "4.4.0"
+                    nickname: "Unsuffered Consequences"
+                    type: "devel"
+                    url: "https://cloud.r-project.org/bin/windows/base/R-devel-win.exe"
+                    date: null
+                    rtools: "43"
+                    rtools_url: "https://github.com/r-hub/rtools43/releases/download/latest/rtools43.exe"
+                
+
   /r-release:
     get:
       summary: R-release
@@ -282,6 +357,39 @@ components:
         version: '3.6.3'
         date: "2020-02-29T08:05:16.744223Z"
         nickname: "Holding the Windsock"
+
+    fullversion:
+      properties:
+        version:
+          type: string
+          pattern: '^\d+\.\d+(\.\d+)?$'
+        date:
+          type: string
+          format: date-time
+        nickname:
+          type: string
+        type:
+          type: string
+        url:
+          type: string
+          format: uri
+        rtools:
+          type: string
+        rtools_url:
+          type: string
+          format: uri
+      required:
+        - version
+        - date
+        - nickname
+        - type
+        - url
+      example:
+        version: "4.2.3"
+        nickname: "Shortstop Beagle"
+        type: "release"
+        url: "https://cran.r-project.org/src/base/R-4/R-4.2.3.tar.gz"
+        date: "2023-03-15T08:06:01.008593Z"
 
     tarball:
       allOf:
