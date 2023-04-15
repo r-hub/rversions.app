@@ -2,6 +2,48 @@ const express = require('express');
 const router = express.Router();
 const endpoints = require('../lib/endpoints');
 const cache = require('../lib/cache');
+const resolve = require('../lib/resolve');
+
+async function do_resolve(res, ver, os, arch) {
+    try {
+        const ans = await resolve(ver, os, arch);
+        res.type('application/json')
+            .send(ans);
+    } catch(error) {
+        res.status(404)
+            .type('application/json')
+            .send({
+                version: ver,
+                os: os,
+                arch: arch,
+                error: "" + error
+            });
+    }
+}
+
+router.get(
+    ["/resolve/oldrel/:n(\\d+)/",
+     "/resolve/oldrel/:n(\\d+)/:os",
+     "/resolve/oldrel/:n(\\d+)/:os/:arch"],
+    async (req, res, next) => {
+        const ver = "oldrel/" + req.params.n;
+        const os = req.params.os;
+        const arch = req.params.arch;
+        do_resolve(res, ver, os, arch);
+    }
+);
+
+router.get(
+    ["/resolve/:ver",
+     "/resolve/:ver/:os",
+     "/resolve/:ver/:os/:arch"],
+    async (req, res, next) => {
+        const ver = req.params.ver;
+        const os = req.params.os;
+        const arch = req.params.arch;
+        do_resolve(res, ver, os, arch);
+    }
+);
 
 router.get("/r-oldrel/:n", async (req, res, next) => {
     try {
