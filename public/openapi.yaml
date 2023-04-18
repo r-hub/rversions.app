@@ -336,6 +336,21 @@ paths:
                 items:
                   $ref: '#/components/schemas/version'
 
+  /rtools-versions:
+    get:
+      summary: All Rtools versions.
+      description: |
+        All released Rtools versions, ordered by version number.
+      responses:
+        '200':
+          description: Successful query.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/rtoolsversion'
+                  
 
 components:
   schemas:
@@ -357,6 +372,31 @@ components:
         version: '3.6.3'
         date: "2020-02-29T08:05:16.744223Z"
         nickname: "Holding the Windsock"
+
+    rtoolsversion:
+      properties:
+        version:
+          type: string
+          pattern: '^\d+$'
+        url:
+          type: string
+          format: uri
+        first:
+          type: string
+          pattern: '^\d+\.\d+(\.\d+)?$'
+        last:
+          type: string
+          pattern: '^\d+\.\d+(\.\d+)?$'
+      required:
+        - version
+        - url
+        - first
+        - last
+      example:
+        version: '42'
+        url: 'https://github.com/r-hub/rtools42/releases/download/latest/rtools42.exe'
+        first: '4.2.0'
+        last: '4.2.100'
 
     fullversion:
       properties:
