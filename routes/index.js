@@ -3,6 +3,27 @@ const router = express.Router();
 const endpoints = require('../lib/endpoints');
 const cache = require('../lib/cache');
 const resolve = require('../lib/resolve');
+const available = require('../lib/available');
+
+router.get(
+    ["/available", "/available/:os", "/available/:os/:arch"],
+    async (req, res, next) => {
+        try {
+            const ans = await available(req.params.os, req.params.arch);
+            res.type('application/json')
+                .send(ans);
+        } catch(error) {
+            res.status(404)
+                .type('application/json')
+                .send({
+                    os: req.params.os,
+                    arch: req.params.arch,
+                    error: "" + error
+                });
+        }
+    }
+);
+
 
 async function do_resolve(res, ver, os, arch) {
     try {
