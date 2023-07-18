@@ -85,11 +85,11 @@ paths:
         - `linux-<distro>-<release>`
 
         Currently supported Linux distros are:
-        - `ubuntu` (18.04, 20.04, 22.04),
+        - `ubuntu` (20.04, 22.04),
         - `centos` (7, 9),
-        - `debian` (10, 11),
+        - `debian` (10, 11, 12),
         - `rhel` (9),
-        - `opensuse` (15.3, 15.4),
+        - `opensuse` (15.4),
         - `almalinux` (8.x, 9.x),
         - `rocky` (8.x, 9.x).
       schema:
@@ -145,11 +145,11 @@ paths:
         - `linux-<distro>-<release>`
 
         Currently supported Linux distros are:
-        - `ubuntu` (18.04, 20.04, 22.04),
+        - `ubuntu` (20.04, 22.04),
         - `centos` (7, 9),
-        - `debian` (10, 11),
+        - `debian` (10, 11, 12),
         - `rhel` (9),
-        - `opensuse` (15.3, 15.4),
+        - `opensuse` (15.4),
         - `almalinux` (8.x, 9.x),
         - `rocky` (8.x, 9.x).
       schema:
