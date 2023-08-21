@@ -396,6 +396,51 @@ paths:
                 items:
                   $ref: '#/components/schemas/rtoolsversion'
 
+  /linux-distros:
+    get:
+      summary: Supported Linux distributions
+      description: |
+        These are the Linux distribution that either
+        https://github.com/rstudio/r-builds/ or https://github.com/r-hub/R/releases
+        has binary R builds for.
+      responses:
+        '200':
+          description: Successful query.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/linuxdistro'
+              examples:
+                Ubuntu-18.04:
+                  value:
+                    id: "ubuntu-1804"
+                    aliases:
+                      - "ubuntu-18.04"
+                      - "bionic"
+                    name: "Ubuntu"
+                    url: "https://ubuntu.com/"
+                    version: "18.04"
+                    codename: "Bionic Beaver"
+                    docker: "ubuntu:18.04"
+                    eol: "2023-05-31"
+                    ppm-binaries: true
+                  summary: |
+                    Ubuntu 18.04.
+                RHEL-8:
+                  value:
+                    id: "rhel-8"
+                    aliases:
+                      - "/rhel-8[.][0-9]+/"
+                    implementation: "centos-8"
+                    name: "Red Hat Enterprise Linux"
+                    url: "https://www.redhat.com/"
+                    version: "8"
+                    docker: "N/A"
+                    eol: "2029‑05‑31"
+                  summary: |
+                    RHEL 8.x is implemented by CentOS 8.
 
 components:
   schemas:
@@ -598,3 +643,40 @@ components:
           example:
             type: "patcheda"
             URL: "https://mac.r-project.org/high-sierra/last-success/R-4.1-branch-x86_64.pkg"
+
+    linuxdistro:
+      properties:
+        id:
+          type: string
+        aliases:
+          type: array
+          items:
+            type: string
+        implementation:
+          type: string
+        name:
+          type: string
+        url:
+          type: string
+          format: uri
+        version:
+          type: string
+        docker:
+          type: string
+        eol:
+          oneOf:
+            - type: string
+              format: date-time
+            - type: string
+              pattern: '^N/A$'
+        ppm-binaries:
+          type: boolean
+        codename:
+          type: string
+      required:
+        - id
+        - name
+        - url
+        - version
+        - docker
+        - eol
