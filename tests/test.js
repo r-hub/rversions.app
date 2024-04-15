@@ -1,44 +1,8 @@
-
 import test from 'ava';
-
 import got from 'got';
 import semver from 'semver';
-import get_port from 'get-port';
-import tempy from 'tempy';
 import iso_8601_regex from '../lib/iso-8601-regex.js';
-
-import run from '../bin/run.js';
-import fs from 'fs';
-
-process.env.NODE_RVERSIONS_APP_REDIS_MOCK = 'true';
-process.env.NODE_RVERSIONS_APP_LOGFILE = tempy.file();
-if (!process.env.NODE_RVERSIONS_APP_NOMOCK) {
-    process.env.NODE_RVERSIONS_DUMMY = 'true';
-}
-let port;                       // set async
-
-test.before(async () => {
-    try {
-        port = await get_port();
-        process.env.PORT = port;
-        await run();
-    } catch(err) {
-        let nerr = new Error('Failed to start test server: ' + err.message);
-        nerr.stack = err.stack;
-        throw(nerr);
-    }
-});
-
-test.after('cleanup', t => {
-    if (!!process.env.NODE_RVERSIONS_APP_LOGFILE) {
-        try {
-            fs.unlinkSync(process.env.NODE_RVERSIONS_LOGFILE);
-        } catch(err) {
-            // ignore errors here
-        }
-    }
-});
-
+const port = 3000;
 
 test('unknown endpoint', async t => {
     const resp = await got(
@@ -49,23 +13,24 @@ test('unknown endpoint', async t => {
 });
 
 test('index page', async t => {
-    const ret = await got('http://localhost:' + port);
+    const ret = await got('http://localhost:' + port + '/rversions');
     t.regex(
         ret.body,
         /Download OpenAPI specification/
     );
 });
 
+
 test('r-release', async t => {
-    const ret = await got('http://localhost:' + port + '/r-release');
+    const ret = await got('http://localhost:' + port + '/rversions/r-release');
     const obj = JSON.parse(ret.body);
     t.truthy(semver.valid(obj.version));
     t.regex(obj.date, iso_8601_regex);
 });
 
 test('r-oldrel', async t => {
-    const pvers = [ got('http://localhost:' + port + '/r-oldrel'),
-                    got('http://localhost:' + port + '/r-release') ];
+    const pvers = [ got('http://localhost:' + port + '/rversions/r-oldrel'),
+                    got('http://localhost:' + port + '/rversions/r-release') ];
     const vers = await Promise.all(pvers);
     const od = JSON.parse(vers[0].body);
     const nw = JSON.parse(vers[1].body);
@@ -74,7 +39,7 @@ test('r-oldrel', async t => {
 });
 
 test('r-release-tarball', async t => {
-    const ret = await got('http://localhost:' + port + '/r-release-tarball');
+    const ret = await got('http://localhost:' + port + '/rversions/r-release-tarball');
     const obj = JSON.parse(ret.body);
     t.truthy(semver.valid(obj.version));
     t.regex(obj.date, iso_8601_regex);
@@ -82,7 +47,7 @@ test('r-release-tarball', async t => {
 });
 
 test('r-release-win', async t => {
-    const ret = await got('http://localhost:' + port + '/r-release-win');
+    const ret = await got('http://localhost:' + port + '/rversions/r-release-win');
     const obj = JSON.parse(ret.body);
     t.truthy(semver.valid(obj.version));
     t.regex(obj.date, iso_8601_regex);
@@ -90,7 +55,7 @@ test('r-release-win', async t => {
 });
 
 test('r-release-macos', async t => {
-    const ret = await got('http://localhost:' + port + '/r-release-macos');
+    const ret = await got('http://localhost:' + port + '/rversions/r-release-macos');
     const obj = JSON.parse(ret.body);
     t.truthy(semver.valid(obj.version));
     t.regex(obj.date, iso_8601_regex);
@@ -98,7 +63,7 @@ test('r-release-macos', async t => {
 });
 
 test('r-release-macos-x86_64', async t => {
-    const ret = await got('http://localhost:' + port + '/r-release-macos-x86_64');
+    const ret = await got('http://localhost:' + port + '/rversions/r-release-macos-x86_64');
     const obj = JSON.parse(ret.body);
     t.truthy(semver.valid(obj.version));
     t.regex(obj.date, iso_8601_regex);
@@ -106,7 +71,7 @@ test('r-release-macos-x86_64', async t => {
 });
 
 test('r-release-macos-arm64', async t => {
-    const ret = await got('http://localhost:' + port + '/r-release-macos-arm64');
+    const ret = await got('http://localhost:' + port + '/rversions/r-release-macos-arm64');
     const obj = JSON.parse(ret.body);
     t.truthy(semver.valid(obj.version));
     t.regex(obj.date, iso_8601_regex);
@@ -114,7 +79,7 @@ test('r-release-macos-arm64', async t => {
 });
 
 test('r-next', async t => {
-    const ret = await got('http://localhost:' + port + '/r-next');
+    const ret = await got('http://localhost:' + port + '/rversions/r-next');
     const obj = JSON.parse(ret.body);
     t.truthy(semver.valid(obj.version));
     t.true(obj.date === null);
@@ -122,7 +87,7 @@ test('r-next', async t => {
 });
 
 test('r-next-win', async t => {
-    const ret = await got('http://localhost:' + port + '/r-next-win');
+    const ret = await got('http://localhost:' + port + '/rversions/r-next-win');
     const obj = JSON.parse(ret.body);
     t.truthy(semver.valid(obj.version));
     t.true(obj.date === null);
@@ -130,7 +95,7 @@ test('r-next-win', async t => {
 });
 
 test('r-next-macos', async t => {
-    const ret = await got('http://localhost:' + port + '/r-next-macos');
+    const ret = await got('http://localhost:' + port + '/rversions/r-next-macos');
     const obj = JSON.parse(ret.body);
     t.truthy(semver.valid(obj.version));
     t.true(obj.date === null);
@@ -138,7 +103,7 @@ test('r-next-macos', async t => {
 });
 
 test('r-next-macos-x86_64', async t => {
-    const ret = await got('http://localhost:' + port + '/r-next-macos-x86_64');
+    const ret = await got('http://localhost:' + port + '/rversions/r-next-macos-x86_64');
     const obj = JSON.parse(ret.body);
     t.truthy(semver.valid(obj.version));
     t.true(obj.date === null);
@@ -146,7 +111,7 @@ test('r-next-macos-x86_64', async t => {
 });
 
 test('r-next-macos-arm64', async t => {
-    const ret = await got('http://localhost:' + port + '/r-next-macos-arm64');
+    const ret = await got('http://localhost:' + port + '/rversions/r-next-macos-arm64');
     const obj = JSON.parse(ret.body);
     t.truthy(semver.valid(obj.version));
     t.true(obj.date === null);
@@ -154,7 +119,7 @@ test('r-next-macos-arm64', async t => {
 });
 
 test('r-prerelease', async t => {
-    const ret = await got('http://localhost:' + port + '/r-prerelease');
+    const ret = await got('http://localhost:' + port + '/rversions/r-prerelease');
     const obj = JSON.parse(ret.body);
     t.truthy(semver.valid(obj.version));
     t.true(obj.date === null);
@@ -162,7 +127,7 @@ test('r-prerelease', async t => {
 });
 
 test('r-prerelease-win', async t => {
-    const ret = await got('http://localhost:' + port + '/r-prerelease-win');
+    const ret = await got('http://localhost:' + port + '/rversions/r-prerelease-win');
     const obj = JSON.parse(ret.body);
     t.truthy(semver.valid(obj.version));
     t.true(obj.date === null);
@@ -170,7 +135,7 @@ test('r-prerelease-win', async t => {
 });
 
 test('r-prerelease-macos', async t => {
-    const ret = await got('http://localhost:' + port + '/r-prerelease-macos');
+    const ret = await got('http://localhost:' + port + '/rversions/r-prerelease-macos');
     const obj = JSON.parse(ret.body);
     t.truthy(semver.valid(obj.version));
     t.true(obj.date === null);
@@ -178,7 +143,7 @@ test('r-prerelease-macos', async t => {
 });
 
 test('r-versions', async t => {
-    const ret = await got('http://localhost:' + port + '/r-versions');
+    const ret = await got('http://localhost:' + port + '/rversions/r-versions');
     const obj = JSON.parse(ret.body);
     t.true(Array.isArray(obj));
     obj.map(function(x) {

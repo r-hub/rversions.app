@@ -5,10 +5,8 @@ import app from '../app.js';
 import http from 'http';
 import cache from '../lib/cache.js';
 
-// Get port from environment and store in Express.
-
-var port = normalizePort(process.env.PORT || '3000');
-app.set('port', port);
+// set in run()
+let port;
 
 // Normalize a port into a number, string, or false.
 
@@ -69,34 +67,38 @@ function onListening() {
 }
 
 async function cache_update() {
-    try {
-        await cache.update();
-        console.log('[' + new Date().toUTCString() +
-                    '] Cache updated successfully');
-    } catch(e) {
-        console.log('[' + new Date().toUTCString() +
-                    '] Cache update failed :(');
-        console.log(e);
-    }
+  try {
+    await cache.update();
+    console.log('[' + new Date().toUTCString() +
+      '] Cache updated successfully');
+  } catch (e) {
+    console.log('[' + new Date().toUTCString() +
+      '] Cache update failed :(');
+    console.log(e);
+  }
 }
 
 async function run() {
-    // Populate the DB, if empty
-    await cache.maybe_update();
+  // Get port from environment and store in Express.
+  port = normalizePort(process.env.PORT || '3000');
+  app.set('port', port);
 
-    // Update once in a minute ...
-    setTimeout(cache_update, 60 * 1000);
+  // Populate the DB, if empty
+  await cache.maybe_update();
 
-    // ... and then update every hour
-    setInterval(cache_update, 60 * 60 * 1000);
+  // Update once in a minute ...
+  setTimeout(cache_update, 60 * 1000);
 
-    // Create HTTP server.
-    server = http.createServer(app);
+  // ... and then update every hour
+  setInterval(cache_update, 60 * 60 * 1000);
 
-    // Listen on provided port, on all network interfaces.
-    server.listen(port);
-    server.on('error', onError);
-    server.on('listening', onListening);
+  // Create HTTP server.
+  server = http.createServer(app);
+
+  // Listen on provided port, on all network interfaces.
+  server.listen(port);
+  server.on('error', onError);
+  server.on('listening', onListening);
 }
 
 export default run;

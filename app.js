@@ -29,4 +29,13 @@ app.set('views', __dirname + '/views');
 
 app.use('/rversions/', rts_index)
 
+app.use(function (err, req, res, next) {
+    res.status(err.status || 500);
+    res.status(404)
+        .send({
+            error: 'End point not found, see documentation',
+            message: err.messge || ""
+        });
+});
+
 export default app;
