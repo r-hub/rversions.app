@@ -6,18 +6,20 @@ volumes:
 services:
 
   rversions:
-    platform: linux/amd64
-    build: .
-    image: "rhub/api-rversions:0.0.34"
-    environment:
-      - REDIS_HOST=redis
-      - PORT=3000
-    depends_on:
-      - redis
+    build:
+      context: .
     ports:
-      - "80:3000"
+      - "3000:80"
+    command: nodemon bin/www.js
+    volumes:
+      - .:/src
+    environment:
+      REDIS_URL: "redis://:secret@redis:6379"
+      GITHUB_TOKEN: ${GITHUB_TOKEN}
 
   redis:
-     image: "redis:4.0.11-alpine"
-     volumes:
-     - rversions-data:/data
+    image: "redis:7.2.4-alpine"
+    volumes:
+      - ./redis.conf:/src/redis.conf
+      - rversions-data:/data
+    command: [ "redis-server", "/src/redis.conf" ]

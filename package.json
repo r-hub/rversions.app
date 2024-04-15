@@ -1,17 +1,20 @@
 {
   "name": "rversions.app",
   "version": "0.0.9",
+  "type": "module",
   "private": true,
+  "engines": {
+    "node": "20.x"
+  },
   "scripts": {
-    "start": "node ./bin/www",
+    "start": "node ./bin/www.js",
     "test": "nyc ava",
     "doc": "npx redoc-cli bundle -t tools/doc-template.hbs public/openapi.yaml; mv redoc-static.html public/index.html"
   },
   "dependencies": {
     "applicationinsights": "^1.7.6",
     "cookie-parser": "^1.4.6",
-    "debug": "~2.6.9",
-    "express": "~4.16.1",
+    "express": "^4.19.2",
     "http-errors": "~1.6.3",
     "morgan": "~1.9.1",
     "mustache-express": "^1.3.2",
@@ -19,9 +22,9 @@
     "rversions": "2.3.9"
   },
   "devDependencies": {
-    "ava": "^3.5.0",
+    "ava": "^6.1.2",
     "get-port": "^5.1.1",
-    "got": "^10.6.0",
+    "got": "^14.2.1",
     "ioredis-mock": "^8.6.0",
     "nyc": "^15.0.0",
     "semver": "^7.1.3",

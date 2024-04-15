@@ -1,9 +1,9 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
-const endpoints = require('../lib/endpoints');
-const cache = require('../lib/cache');
-const resolve = require('../lib/resolve');
-const available = require('../lib/available');
+import endpoints from '../lib/endpoints.js';
+import cache from '../lib/cache.js';
+import resolve from '../lib/resolve.js';
+import available from '../lib/available.js';
 
 router.get(
     ["/available", "/available/:os", "/available/:os/:arch"],
@@ -108,4 +108,4 @@ router.get('/:what', async (req, res, next) => {
   }
 });
 
-module.exports = router;
+export default router;

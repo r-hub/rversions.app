@@ -1,10 +1,9 @@
 
 // Module dependencies.
 
-const app = require('../app');
-const debug = require('debug')('rversions.app:server');
-const http = require('http');
-const cache = require('../lib/cache');
+import app from '../app.js';
+import http from 'http';
+import cache from '../lib/cache.js';
 
 // Get port from environment and store in Express.
 
@@ -66,7 +65,7 @@ function onListening() {
   var bind = typeof addr === 'string'
     ? 'pipe ' + addr
     : 'port ' + addr.port;
-  debug('Listening on ' + bind);
+  console.log('Listening on ' + bind);
 }
 
 async function cache_update() {
@@ -100,4 +99,4 @@ async function run() {
     server.on('listening', onListening);
 }
 
-module.exports = run;
+export default run;

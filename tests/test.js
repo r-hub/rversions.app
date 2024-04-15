@@ -1,11 +1,14 @@
 
-const test = require('ava');
+import test from 'ava';
 
-const got = require('got');
-const semver = require('semver');
-const get_port = require('get-port');
-const tempy = require('tempy');
-const iso_8601_regex = require('../lib/iso-8601-regex');
+import got from 'got';
+import semver from 'semver';
+import get_port from 'get-port';
+import tempy from 'tempy';
+import iso_8601_regex from '../lib/iso-8601-regex.js';
+
+import run from '../bin/run.js';
+import fs from 'fs';
 
 process.env.NODE_RVERSIONS_APP_REDIS_MOCK = 'true';
 process.env.NODE_RVERSIONS_APP_LOGFILE = tempy.file();
@@ -18,7 +21,6 @@ test.before(async () => {
     try {
         port = await get_port();
         process.env.PORT = port;
-        const run = require('../bin/run');
         await run();
     } catch(err) {
         let nerr = new Error('Failed to start test server: ' + err.message);
@@ -30,7 +32,6 @@ test.before(async () => {
 test.after('cleanup', t => {
     if (!!process.env.NODE_RVERSIONS_APP_LOGFILE) {
         try {
-            const fs = require('fs');
             fs.unlinkSync(process.env.NODE_RVERSIONS_LOGFILE);
         } catch(err) {
             // ignore errors here

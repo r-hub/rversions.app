@@ -1,9 +1,13 @@
-const express = require('express');
-const logger = require('morgan');
-const mustache = require('mustache-express');
-const fs = require('fs');
+import express from 'express';
+import logger from 'morgan';
+import mustache from 'mustache-express';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-const rts_index = require('./routes/index');
+import rts_index from './routes/index.js';
 
 const app = express();
 
@@ -17,12 +21,12 @@ if (!!process.env.NODE_RVERSIONS_APP_LOGFILE) {
 }
 
 app.use(express.urlencoded({ extended: false }));
-app.use(express.static('public'))
+app.use('/rversions/', express.static('public'))
 
-app.engine('mustache', mustache()); 
+app.engine('mustache', mustache());
 app.set('view engine', 'mustache');
 app.set('views', __dirname + '/views');
 
-app.use('/', rts_index)
+app.use('/rversions/', rts_index)
 
-module.exports = app;
+export default app;
