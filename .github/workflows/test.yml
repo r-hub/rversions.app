@@ -27,5 +27,6 @@ jobs:
           docker compose build
           docker compose up -d
           sleep 2
+          npm install
           npm test
           docker compose down
