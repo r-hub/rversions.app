@@ -18,5 +18,4 @@ services:
     image: "redis:7.2.4-alpine"
     volumes:
       - ./redis.conf:/src/redis.conf
-      - ./cache:/data
     command: [ "redis-server", "/src/redis.conf" ]
