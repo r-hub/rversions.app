@@ -20,7 +20,6 @@ test('index page', async t => {
     );
 });
 
-
 test('r-release', async t => {
     const ret = await got('http://localhost:' + port + '/rversions/r-release');
     const obj = JSON.parse(ret.body);
@@ -153,4 +152,57 @@ test('r-versions', async t => {
         }
         t.regex(x.date, iso_8601_regex);
     });
+});
+
+test('resolve', async t => {
+    const tmpl =
+        'http://localhost:' + port + '/rversions/resolve/$ver/$os';
+    const vers = [
+        'devel', 'next', 'release', 'oldrel', 'oldrel/4',
+        '4.3.3', '4.3'
+    ];
+    const oses = ['win', 'windows', 'macos', 'linux-ubuntu-22.04'];
+
+    for (const ver of vers) {
+        for (const os of oses) {
+            const url = tmpl.replace('$ver', ver).replace('$os', os);
+            const resp = await got(url, { throwHttpErrors: false });
+            t.true(
+                resp.statusCode >= 200 && resp.statusCode < 400,
+                url
+            )
+        }
+    }
+});
+
+test('available', async t => {
+    const tmpl = 'http://localhost:' + port + '/rversions/available/$os';
+    const oses = ['win', 'windows', 'macos', 'linux-ubuntu-22.04'];
+
+    for (const os of oses) {
+        const url = tmpl.replace('$os', os);
+        const resp = await got(url, { throwHttpErrors: false });
+        t.true(
+            resp.statusCode >= 200 && resp.statusCode < 400,
+            url
+        )
+    }
+})
+
+test('rtools-versions', async t => {
+    const url = 'http://localhost:' + port + '/rversions/rtools-versions';
+    const resp = await got(url, { throwHttpErrors: false });
+    t.true(
+        resp.statusCode >= 200 && resp.statusCode < 400,
+        url
+    )
+});
+
+test('linux-distros', async t => {
+    const url = 'http://localhost:' + port + '/rversions/linux-distros';
+    const resp = await got(url, { throwHttpErrors: false });
+    t.true(
+        resp.statusCode >= 200 && resp.statusCode < 400,
+        url
+    )
 });
