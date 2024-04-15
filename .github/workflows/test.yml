@@ -27,8 +27,9 @@ jobs:
           docker compose build
           docker compose up -d
           npm install
-          sleep 2
-          docker compose ps
+          sleep 10
+          docker compose ps || true
+          docker compose logs rversions || true
           curl -v http://localhost:3000/rversions/resolve/next/win
           npm test
           docker compose down
