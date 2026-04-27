@@ -198,6 +198,15 @@ test('rtools-versions', async t => {
     )
 });
 
+test('rtools-versions/x86_64', async t => {
+    const url = 'http://localhost:' + port + '/rversions/rtools-versions/x86_64';
+    const resp = await got(url, { throwHttpErrors: false });
+    t.true(
+        resp.statusCode >= 200 && resp.statusCode < 400,
+        url
+    )
+});
+
 test('linux-distros', async t => {
     const url = 'http://localhost:' + port + '/rversions/linux-distros';
     const resp = await got(url, { throwHttpErrors: false });
