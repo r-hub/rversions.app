@@ -66,14 +66,22 @@ function onListening() {
   console.log('Listening on ' + bind);
 }
 
+function stamp() {
+  return '[' + new Date().toUTCString() + '] ';
+}
+
 async function cache_update() {
   try {
-    await cache.update();
-    console.log('[' + new Date().toUTCString() +
-      '] Cache updated successfully');
+    const failed = await cache.update();
+    if (failed.length === 0) {
+      console.log(stamp() + 'Cache updated successfully');
+    } else {
+      console.log(stamp() + 'Cache updated, but ' + failed.length +
+        ' end point(s) failed, serving the cached values for these: ' +
+        failed.join(', '));
+    }
   } catch (e) {
-    console.log('[' + new Date().toUTCString() +
-      '] Cache update failed :(');
+    console.log(stamp() + 'Cache update failed :(');
     console.log(e);
   }
 }
@@ -83,8 +91,18 @@ async function run() {
   port = normalizePort(process.env.PORT || '3000');
   app.set('port', port);
 
-  // Populate the DB, if empty
-  await cache.maybe_update();
+  // Populate the DB, if empty. If the upstream servers are down, then we
+  // still start up, and serve whatever we have in the cache.
+  try {
+    const failed = await cache.maybe_update();
+    if (failed.length > 0) {
+      console.log(stamp() + 'Could not populate ' + failed.length +
+        ' end point(s): ' + failed.join(', '));
+    }
+  } catch (e) {
+    console.log(stamp() + 'Cannot populate the cache at startup');
+    console.log(e);
+  }
 
   // Update once in a minute ...
   setTimeout(cache_update, 60 * 1000);

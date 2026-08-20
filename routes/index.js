@@ -70,7 +70,7 @@ router.get("/r-oldrel/:n", async (req, res, next) => {
     try {
         const n = req.params.n;
         if (['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'].indexOf(n) == -1) {
-            res.status(404)
+            return res.status(404)
                 .send({ error: 'End point not found, see documentation' });
         }
         const value = await cache.get('r-oldrel/' + n);
@@ -104,7 +104,7 @@ router.get("/rtools-versions/aarch64",
         const value = await cache.get('rtools-versions/aarch64');
         if (value === null) {
             res.status(500)
-                .send({ error: 'Internal server error, cannot find /r-oldrel/' + n });
+                .send({ error: 'Internal server error, cannot find /rtools-versions/aarch64' });
         } else {
             res.type('application/json')
                 .send(value);
