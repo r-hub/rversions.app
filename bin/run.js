@@ -87,6 +87,13 @@ async function cache_update() {
 }
 
 async function run() {
+  // got + p-cancelable (bundled by rversions) can throw from a retry
+  // timer after their promise already settled, outside any try/catch.
+  // Log and keep serving instead of crashing.
+  process.on('uncaughtException', function(error) {
+    console.log(stamp() + 'Uncaught exception: ' + error);
+  });
+
   // Get port from environment and store in Express.
   port = normalizePort(process.env.PORT || '3000');
   app.set('port', port);
