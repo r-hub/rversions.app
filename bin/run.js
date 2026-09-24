@@ -87,11 +87,23 @@ async function cache_update() {
 }
 
 async function run() {
-  // got + p-cancelable (bundled by rversions) can throw from a retry
-  // timer after their promise already settled, outside any try/catch.
-  // Log and keep serving instead of crashing.
+  // Async HTTP errors from got can surface outside any try/catch, e.g. the
+  // p-cancelable throw from a retry timer that fires after the request
+  // already failed. Answers come from Redis, so staying up and serving the
+  // cache beats exiting, and the next update tick retries anyway.
+  const settled =
+    'The `onCancel` handler was attached after the promise settled.';
   process.on('uncaughtException', function(error) {
-    console.log(stamp() + 'Uncaught exception: ' + error);
+    if (error instanceof Error && error.message === settled) {
+      console.log(stamp() + 'Ignored known got retry bug for a failed update');
+      return;
+    }
+    console.log(stamp() + 'Uncaught exception, still serving from cache');
+    console.log(error);
+  });
+  process.on('unhandledRejection', function(error) {
+    console.log(stamp() + 'Unhandled rejection, still serving from cache');
+    console.log(error);
   });
 
   // Get port from environment and store in Express.
