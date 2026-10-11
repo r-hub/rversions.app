@@ -5,6 +5,12 @@ import cache from '../lib/cache.js';
 import resolve from '../lib/resolve.js';
 import available from '../lib/available.js';
 
+// 404 if the query has no answer, 500 if we could not get one, e.g.
+// because the upstream servers are down.
+function error_status(error) {
+    return error.code === 'ERVERSIONS_NOT_FOUND' ? 404 : 500;
+}
+
 router.get(
     ["/available", "/available/:os", "/available/:os/:arch"],
     async (req, res, next) => {
@@ -13,7 +19,7 @@ router.get(
             res.type('application/json')
                 .send(ans);
         } catch(error) {
-            res.status(404)
+            res.status(error_status(error))
                 .type('application/json')
                 .send({
                     os: req.params.os,
@@ -31,7 +37,7 @@ async function do_resolve(res, ver, os, arch) {
         res.type('application/json')
             .send(ans);
     } catch(error) {
-        res.status(404)
+        res.status(error_status(error))
             .type('application/json')
             .send({
                 version: ver,
